@@ -1,0 +1,176 @@
+-- MySQL Workbench Forward Engineering
+
+SET @OLD_UNIQUE_CHECKS = @@UNIQUE_CHECKS, UNIQUE_CHECKS = 0;
+SET @OLD_FOREIGN_KEY_CHECKS = @@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS = 0;
+SET @OLD_SQL_MODE = @@SQL_MODE, SQL_MODE =
+        'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+
+-- -----------------------------------------------------
+-- Schema delivery
+-- -----------------------------------------------------
+
+-- -----------------------------------------------------
+-- Schema delivery
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `delivery` DEFAULT CHARACTER SET utf8;
+USE `delivery`;
+
+-- -----------------------------------------------------
+-- Table `delivery`.`role`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `delivery`.`role`
+(
+    `id_role`   INT        NOT NULL AUTO_INCREMENT,
+    `user_role` VARCHAR(6) NOT NULL,
+    PRIMARY KEY (`id_role`),
+    UNIQUE INDEX `idrole_UNIQUE` (`id_role` ASC) VISIBLE
+)
+    ENGINE = InnoDB;
+
+INSERT INTO `delivery`.`role`
+VALUES (DEFAULT, 'admin');
+INSERT INTO `delivery`.`role`
+VALUES (DEFAULT, 'client');
+
+-- -----------------------------------------------------
+-- Table `delivery`.`authorized_user`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `delivery`.`authorized_user`
+(
+    `id_authorized_user` INT          NOT NULL AUTO_INCREMENT,
+    `login`              VARCHAR(100) NOT NULL,
+    `password`           VARCHAR(50)  NOT NULL,
+    `name`               VARCHAR(100) NOT NULL,
+    `role_id_role`       INT          NOT NULL,
+    PRIMARY KEY (`id_authorized_user`),
+    UNIQUE INDEX `id_authorized_user_UNIQUE` (`id_authorized_user` ASC) VISIBLE,
+    UNIQUE INDEX `authorized_usercol_UNIQUE` (`login` ASC) VISIBLE,
+    INDEX `fk_authorized_user_role1_idx` (`role_id_role` ASC) VISIBLE,
+    CONSTRAINT `fk_authorized_user_role1`
+        FOREIGN KEY (`role_id_role`)
+            REFERENCES `delivery`.`role` (`id_role`)
+            ON DELETE NO ACTION
+            ON UPDATE NO ACTION
+)
+    ENGINE = InnoDB;
+
+-- id = 1
+INSERT INTO `delivery`.`authorized_user`
+VALUES (DEFAULT, 'admin', 'admin', 'Kateryna Zakharova', 0);
+-- id = 2
+INSERT INTO `delivery`.`authorized_user`
+VALUES (DEFAULT, 'Paul_Smith1987@gmail.com', '123321', 'Paul Smith', 1);
+-- id = 3
+INSERT INTO `delivery`.`authorized_user`
+VALUES (DEFAULT, 'Alina.Petrova13091999@gmail.com', 'flower13091999', 'Алина Петрова', 1);
+
+-- -----------------------------------------------------
+-- Table `delivery`.`rate`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `delivery`.`rate`
+(
+    `id_rate`     INT         NOT NULL AUTO_INCREMENT,
+    `type`        VARCHAR(10) NOT NULL,
+    `coefficient` FLOAT       NOT NULL,
+    PRIMARY KEY (`id_rate`)
+)
+    ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `delivery`.`order`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `delivery`.`order`
+(
+    `id_order`                           INT          NOT NULL AUTO_INCREMENT,
+    `user_login`                         VARCHAR(50)  NOT NULL,
+    `name`                               VARCHAR(100) NOT NULL,
+    `departure_date`                     DATE         NOT NULL,
+    `type`                               VARCHAR(45)  NOT NULL,
+    `weight`                             INT          NOT NULL,
+    `volume`                             INT          NOT NULL,
+    `city`                               VARCHAR(45)  NOT NULL,
+    `price`                              INT          NOT NULL,
+    `payment`                            INT          NOT NULL,
+    `authorized_user_id_authorized_user` INT          NOT NULL,
+    `rate_id_rate`                       INT          NOT NULL,
+    PRIMARY KEY (`id_order`),
+    UNIQUE INDEX `id_order_UNIQUE` (`id_order` ASC) VISIBLE,
+    INDEX `fk_order_authoried_user1_idx` (`authorized_user_id_authorized_user` ASC) VISIBLE,
+    INDEX `fk_order_rate1_idx` (`rate_id_rate` ASC) VISIBLE,
+    CONSTRAINT `fk_order_authoried_user1`
+        FOREIGN KEY (`authorized_user_id_authorized_user`)
+            REFERENCES `delivery`.`authorized_user` (`id_authorized_user`)
+            ON DELETE NO ACTION
+            ON UPDATE NO ACTION,
+    CONSTRAINT `fk_order_rate1`
+        FOREIGN KEY (`rate_id_rate`)
+            REFERENCES `delivery`.`rate` (`id_rate`)
+            ON DELETE NO ACTION
+            ON UPDATE NO ACTION
+)
+    ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `delivery`.`report`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `delivery`.`report`
+(
+    `id_report`      INT         NOT NULL AUTO_INCREMENT,
+    `delivery_date`  DATE        NOT NULL,
+    `city`           VARCHAR(45) NOT NULL,
+    `order_id_order` INT         NOT NULL,
+    PRIMARY KEY (`id_report`),
+    UNIQUE INDEX `idreport_UNIQUE` (`id_report` ASC) VISIBLE,
+    INDEX `fk_report_order_idx` (`order_id_order` ASC) VISIBLE,
+    CONSTRAINT `fk_report_order`
+        FOREIGN KEY (`order_id_order`)
+            REFERENCES `delivery`.`order` (`id_order`)
+            ON DELETE NO ACTION
+            ON UPDATE NO ACTION
+)
+    ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `delivery`.`driver`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `delivery`.`driver`
+(
+    `id_driver` INT          NOT NULL AUTO_INCREMENT,
+    `name`      VARCHAR(100) NOT NULL,
+    PRIMARY KEY (`id_driver`),
+    UNIQUE INDEX `id_driver_UNIQUE` (`id_driver` ASC) VISIBLE
+)
+    ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `delivery`.`driver_city_date`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `delivery`.`driver_city_date`
+(
+    `city`             VARCHAR(45) NOT NULL,
+    `day`              DATE        NOT NULL,
+    `driver_id_driver` INT         NOT NULL,
+    `report_id_report` INT         NOT NULL,
+    INDEX `fk_driver_city_date_driver1_idx` (`driver_id_driver` ASC) VISIBLE,
+    INDEX `fk_driver_city_date_report1_idx` (`report_id_report` ASC) VISIBLE,
+    CONSTRAINT `fk_driver_city_date_driver1`
+        FOREIGN KEY (`driver_id_driver`)
+            REFERENCES `delivery`.`driver` (`id_driver`)
+            ON DELETE NO ACTION
+            ON UPDATE NO ACTION,
+    CONSTRAINT `fk_driver_city_date_report1`
+        FOREIGN KEY (`report_id_report`)
+            REFERENCES `delivery`.`report` (`id_report`)
+            ON DELETE NO ACTION
+            ON UPDATE NO ACTION
+)
+    ENGINE = InnoDB;
+
+
+SET SQL_MODE = @OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS = @OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS = @OLD_UNIQUE_CHECKS;
