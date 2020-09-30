@@ -7,7 +7,6 @@ package db;
  */
 public final class Fields {
 
-    // entities
     public static final String ENTITY__ID = "id";
 
     public static final String AUTHORIZED_USER__LOGIN = "login";

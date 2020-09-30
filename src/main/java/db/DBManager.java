@@ -28,6 +28,7 @@ public class DBManager {
     private static final ClassLoader LOADER = new URLClassLoader(urls);
 
     private static DBManager dbManager;
+
     private static final String CONNECTION_URL = ResourceBundle.getBundle("app", Locale.getDefault(), LOADER).getString("connection.url");
 
     private DBManager() {
