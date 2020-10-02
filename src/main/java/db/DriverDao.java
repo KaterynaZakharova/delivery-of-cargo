@@ -138,7 +138,7 @@ public class DriverDao {
                 DriverCityDateBean bean = new DriverCityDateBean();
 
                 bean.setId(resultSet.getLong(Fields.DRIVER_CITY_DATE__DRIVER_ID));
-                bean.setdriverName(resultSet.getString(Fields.DRIVER_CITY_DATE__BEAN__DRIVER_NAME));
+                bean.setDriverName(resultSet.getString(Fields.DRIVER_CITY_DATE__BEAN__DRIVER_NAME));
                 bean.setCityDateCity(resultSet.getString(Fields.DRIVER_CITY_DATE__CITY));
                 bean.setCityDateDay(resultSet.getDate(Fields.DRIVER_CITY_DATE__DAY));
 
