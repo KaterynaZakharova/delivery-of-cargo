@@ -11,8 +11,6 @@ public class Report extends Entity {
 
     private String deliveryDate;
 
-    private String city;
-
     public String getDeliveryDate() {
         return deliveryDate;
     }
@@ -21,16 +19,8 @@ public class Report extends Entity {
         this.deliveryDate = deliveryDate;
     }
 
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
     @Override
     public String toString() {
-        return "Report [deliveryDate=" + deliveryDate + ", city=" + city + ", getId()=" + getId() + "]";
+        return "Report [deliveryDate=" + deliveryDate + ", getId()=" + getId() + "]";
     }
 }

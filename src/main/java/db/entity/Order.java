@@ -9,10 +9,6 @@ public class Order extends Entity {
 
     private static final long serialVersionUID = 4732718395046889396L;
 
-    private String userLogin;
-
-    private String name;
-
     private String departureDate;
 
     private String type;
@@ -26,22 +22,6 @@ public class Order extends Entity {
     private int price;
 
     private boolean payment;
-
-    public String getUserLogin() {
-        return userLogin;
-    }
-
-    public void setUserLogin(String userLogin) {
-        this.userLogin = userLogin;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 
     public String getDepartureDate() {
         return departureDate;
@@ -101,9 +81,9 @@ public class Order extends Entity {
 
     @Override
     public String toString() {
-        return "Order [userLogin=" + userLogin + ", name=" + name + ", departureDate=" + departureDate +
-                ", type=" + type + ", weight=" + weight + ", volume=" + volume + ", city=" + city +
-                ", price=" + price + ", payment=" + payment + ", getId()=" + getId() + "]";
+        return "Order [departureDate=" + departureDate + ", type=" + type + ", weight=" + weight +
+                ", volume=" + volume + ", city=" + city + ", price=" + price + ", payment=" + payment +
+                ", getId()=" + getId() + "]";
     }
 }
 

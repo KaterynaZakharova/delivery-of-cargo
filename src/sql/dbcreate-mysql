@@ -82,22 +82,22 @@ CREATE TABLE IF NOT EXISTS `delivery`.`rate`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `delivery`.`order`
 (
-    `id_order`                           INT          NOT NULL AUTO_INCREMENT,
-    `user_login`                         VARCHAR(50)  NOT NULL,
-    `name`                               VARCHAR(100) NOT NULL,
-    `departure_date`                     DATE         NOT NULL,
-    `type`                               VARCHAR(45)  NOT NULL,
-    `weight`                             INT          NOT NULL,
-    `volume`                             INT          NOT NULL,
-    `city`                               VARCHAR(45)  NOT NULL,
-    `price`                              INT          NOT NULL,
-    `payment`                            INT          NOT NULL,
-    `authorized_user_id_authorized_user` INT          NOT NULL,
-    `rate_id_rate`                       INT          NOT NULL,
+    `id_order`                           INT         NOT NULL AUTO_INCREMENT,
+    `departure_date`                     VARCHAR(10) NOT NULL,
+    `type`                               VARCHAR(45) NOT NULL,
+    `weight`                             INT         NOT NULL,
+    `volume`                             INT         NOT NULL,
+    `city`                               VARCHAR(45) NOT NULL,
+    `price`                              INT         NOT NULL,
+    `payment`                            INT         NOT NULL,
+    `authorized_user_id_authorized_user` INT         NOT NULL,
+    `rate_id_rate`                       INT         NOT NULL,
+    `driver_id_driver`                   INT         NOT NULL,
     PRIMARY KEY (`id_order`),
     UNIQUE INDEX `id_order_UNIQUE` (`id_order` ASC) VISIBLE,
     INDEX `fk_order_authoried_user1_idx` (`authorized_user_id_authorized_user` ASC) VISIBLE,
     INDEX `fk_order_rate1_idx` (`rate_id_rate` ASC) VISIBLE,
+    INDEX `fk_order_driver1_idx` (`driver_id_driver` ASC) VISIBLE,
     CONSTRAINT `fk_order_authoried_user1`
         FOREIGN KEY (`authorized_user_id_authorized_user`)
             REFERENCES `delivery`.`authorized_user` (`id_authorized_user`)
@@ -106,6 +106,11 @@ CREATE TABLE IF NOT EXISTS `delivery`.`order`
     CONSTRAINT `fk_order_rate1`
         FOREIGN KEY (`rate_id_rate`)
             REFERENCES `delivery`.`rate` (`id_rate`)
+            ON DELETE NO ACTION
+            ON UPDATE NO ACTION,
+    CONSTRAINT `fk_order_driver1`
+        FOREIGN KEY (`driver_id_driver`)
+            REFERENCES `delivery`.`driver` (`id_driver`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION
 )
@@ -118,8 +123,7 @@ CREATE TABLE IF NOT EXISTS `delivery`.`order`
 CREATE TABLE IF NOT EXISTS `delivery`.`report`
 (
     `id_report`      INT         NOT NULL AUTO_INCREMENT,
-    `delivery_date`  DATE        NOT NULL,
-    `city`           VARCHAR(45) NOT NULL,
+    `delivery_date`  VARCHAR(10) NOT NULL,
     `order_id_order` INT         NOT NULL,
     PRIMARY KEY (`id_report`),
     UNIQUE INDEX `idreport_UNIQUE` (`id_report` ASC) VISIBLE,
@@ -154,17 +158,10 @@ CREATE TABLE IF NOT EXISTS `delivery`.`driver_city_date`
     `city`             VARCHAR(45) NOT NULL,
     `day`              DATE        NOT NULL,
     `driver_id_driver` INT         NOT NULL,
-    `report_id_report` INT         NOT NULL,
     INDEX `fk_driver_city_date_driver1_idx` (`driver_id_driver` ASC) VISIBLE,
-    INDEX `fk_driver_city_date_report1_idx` (`report_id_report` ASC) VISIBLE,
     CONSTRAINT `fk_driver_city_date_driver1`
         FOREIGN KEY (`driver_id_driver`)
             REFERENCES `delivery`.`driver` (`id_driver`)
-            ON DELETE NO ACTION
-            ON UPDATE NO ACTION,
-    CONSTRAINT `fk_driver_city_date_report1`
-        FOREIGN KEY (`report_id_report`)
-            REFERENCES `delivery`.`report` (`id_report`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION
 )

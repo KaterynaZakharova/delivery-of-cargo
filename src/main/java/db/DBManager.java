@@ -1,74 +1,86 @@
 package db;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.sql.*;
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.apache.log4j.Logger;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.logging.Level;
+
+/**
+ * DB manager. Works with MySQL.
+ * Only the required DAO methods are defined!
+ *
+ * @author K.Zakharova
+ */
 public class DBManager {
 
-    private static final File FILE = new File("./");
-    private static URL[] urls;
+    private static final Logger log = Logger.getLogger(DBManager.class);
 
-    static {
-        try {
-            urls = new URL[]{FILE.toURI().toURL()};
-        } catch (MalformedURLException e) {
-            Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, e);
+    private static DBManager instance;
+
+    public static synchronized DBManager getInstance() {
+        if (instance == null) {
+            instance = new DBManager();
         }
+
+        return instance;
     }
 
-    private static final ClassLoader LOADER = new URLClassLoader(urls);
+    /**
+     * Returns a DB connection from the Pool Connections. Before using this
+     * method you must configure the Date Source and the Connections Pool in your
+     * WEB_APP_ROOT/META-INF/context.xml file.
+     *
+     * @return A DB connection.
+     */
+    public Connection getConnection() throws SQLException {
+        Connection con = null;
+        try {
+            Context initContext = new InitialContext();
+            Context envContext = (Context) initContext.lookup("java:/comp/env");
 
-    private static DBManager dbManager;
-
-    private static final String CONNECTION_URL = ResourceBundle.getBundle("app", Locale.getDefault(), LOADER).getString("connection.url");
+            DataSource ds = (DataSource) envContext.lookup("jdbc/ST4DB");
+            con = ds.getConnection();
+        } catch (NamingException ex) {
+            log.error("Cannot obtain a connection from the pool", ex);
+        }
+        return con;
+    }
 
     private DBManager() {
-        try (Connection connection = getConnection(CONNECTION_URL);
-             Statement statement = connection.createStatement();
-             InputStream inputStream = new FileInputStream("sql/dbcreate-mysql.sql")) {
+    }
 
-            Scanner scanner = new Scanner(inputStream);
-            scanner.useDelimiter("/\\*[\\s\\S]*?\\*/|--[^\\r\\n]*|;");
+    /**
+     * Commits and close the given connection.
+     *
+     * @param connection Connection to be committed and closed.
+     */
+    public void commitAndClose(Connection connection) {
+        try {
+            connection.commit();
 
-            while (scanner.hasNext()) {
-                String command = scanner.next().trim();
-
-                if (!command.isEmpty())
-                    statement.execute(command);
-            }
-        } catch (SQLException | IOException e) {
-            Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, e);
+            connection.close();
+        } catch (SQLException ex) {
+            java.util.logging.Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    public static DBManager getInstance() {
-        if (dbManager == null) {
-            dbManager = new DBManager();
-        }
+    /**
+     * Rollbacks and close the given connection.
+     *
+     * @param connection Connection to be rollbacked and closed.
+     */
+    public void rollbackAndClose(Connection connection) {
+        try {
+            connection.rollback();
 
-        return dbManager;
-    }
-
-    public Connection getConnection(String connectionUrl) throws SQLException {
-        return DriverManager.getConnection(connectionUrl);
-    }
-
-    private static void close(ResultSet resultSet) {
-        if (resultSet != null) {
-            try {
-                resultSet.close();
-            } catch (SQLException e) {
-                Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, e);
-            }
+            connection.close();
+        } catch (SQLException ex) {
+            java.util.logging.Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }
