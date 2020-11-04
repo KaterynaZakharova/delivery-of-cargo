@@ -1,9 +1,11 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Admin Cabinet - Delivery</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Admin's Cabinet</title>
 </head>
+
 <body>
-ADMIN
+<p>Welcome ADMIN</p>
 </body>
 </html>

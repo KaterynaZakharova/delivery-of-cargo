@@ -3,4 +3,37 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
          version="4.0">
+
+    <display-name>Delivery</display-name>
+
+    <welcome-file-list>
+        <welcome-file>welcome_page.jsp</welcome-file>
+    </welcome-file-list>
+
+    <servlet>
+        <servlet-name>LogIn</servlet-name>
+        <servlet-class>web.LogIn</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>LogIn</servlet-name>
+        <url-pattern>/LogIn</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>Registration</servlet-name>
+        <servlet-class>web.Registration</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Registration</servlet-name>
+        <url-pattern>/Registration</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>MakeAnOrder</servlet-name>
+        <servlet-class>web.MakeAnOrder</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>MakeAnOrder</servlet-name>
+        <url-pattern>/MakeAnOrder</url-pattern>
+    </servlet-mapping>
 </web-app>

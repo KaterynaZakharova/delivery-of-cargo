@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.logging.Level;
 
 /**
  * Data access object for User entity.
@@ -20,6 +21,9 @@ public class UserDao {
 
     private static final String SQL_UPDATE_USER =
             "UPDATE authorized_user SET password=?, name=? WHERE id_authorized_user=?";
+
+    private static final String SQL_INSERT_USER =
+            "INSERT INTO `delivery`.`authorized_user` (id_authorized_user, name, login, password, role_id_role) VALUES (DEFAULT, ?, ?, ?, 1)";
 
     /**
      * Returns a user with the given identifier.
@@ -52,7 +56,7 @@ public class UserDao {
         } catch (SQLException ex) {
             DBManager.getInstance().rollbackAndClose(connection);
 
-            ex.printStackTrace();
+            java.util.logging.Logger.getLogger(UserDao.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             DBManager.getInstance().commitAndClose(connection);
         }
@@ -89,11 +93,11 @@ public class UserDao {
             resultSet.close();
             preparedStatement.close();
         } catch (SQLException ex) {
-            DBManager.getInstance().rollbackAndClose(connection);
+            //DBManager.getInstance().rollbackAndClose(connection);
 
-            ex.printStackTrace();
+            java.util.logging.Logger.getLogger(UserDao.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            DBManager.getInstance().commitAndClose(connection);
+            //DBManager.getInstance().commitAndClose(connection);
         }
 
         return user;
@@ -114,7 +118,7 @@ public class UserDao {
         } catch (SQLException ex) {
             DBManager.getInstance().rollbackAndClose(connection);
 
-            ex.printStackTrace();
+            java.util.logging.Logger.getLogger(UserDao.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             DBManager.getInstance().commitAndClose(connection);
         }
@@ -145,6 +149,18 @@ public class UserDao {
         preparedStatement.close();
     }
 
+    public void insertUser(String name, String login, String password) throws SQLException {
+        Connection connection = DBManager.getInstance().getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(SQL_INSERT_USER);
+
+        preparedStatement.setString(1, name);
+        preparedStatement.setString(2, login);
+        preparedStatement.setString(3, password);
+
+        preparedStatement.execute();
+
+        connection.close();
+    }
 
     /**
      * Extracts a user from the result set row.

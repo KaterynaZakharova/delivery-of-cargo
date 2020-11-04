@@ -1,12 +1,11 @@
 package db;
 
-import org.apache.log4j.Logger;
+//import org.apache.log4j.Logger;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.sql.DataSource;
+
+import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.logging.Level;
 
@@ -18,7 +17,7 @@ import java.util.logging.Level;
  */
 public class DBManager {
 
-    private static final Logger log = Logger.getLogger(DBManager.class);
+    //private static final Logger log = Logger.getLogger(DBManager.class);
 
     private static DBManager instance;
 
@@ -38,17 +37,26 @@ public class DBManager {
      * @return A DB connection.
      */
     public Connection getConnection() throws SQLException {
-        Connection con = null;
-        try {
-            Context initContext = new InitialContext();
-            Context envContext = (Context) initContext.lookup("java:/comp/env");
+        Connection connection = null;
 
-            DataSource ds = (DataSource) envContext.lookup("jdbc/ST4DB");
-            con = ds.getConnection();
-        } catch (NamingException ex) {
-            log.error("Cannot obtain a connection from the pool", ex);
+        try {
+            String url = "jdbc:mysql://localhost/delivery?serverTimezone=Europe/Moscow&useSSL=false";
+
+            Class.forName("com.mysql.cj.jdbc.Driver").getDeclaredConstructor().newInstance();
+
+            connection = DriverManager.getConnection(url, "root", "root");
+        } catch (InstantiationException e) {
+            java.util.logging.Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, e);
+        } catch (InvocationTargetException e) {
+            java.util.logging.Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, e);
+        } catch (NoSuchMethodException e) {
+            java.util.logging.Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, e);
+        } catch (IllegalAccessException e) {
+            java.util.logging.Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, e);
+        } catch (ClassNotFoundException e) {
+            java.util.logging.Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, e);
         }
-        return con;
+        return connection;
     }
 
     private DBManager() {

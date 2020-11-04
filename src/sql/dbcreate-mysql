@@ -27,11 +27,6 @@ CREATE TABLE IF NOT EXISTS `delivery`.`role`
 )
     ENGINE = InnoDB;
 
-INSERT INTO `delivery`.`role`
-VALUES (DEFAULT, 'admin');
-INSERT INTO `delivery`.`role`
-VALUES (DEFAULT, 'client');
-
 -- -----------------------------------------------------
 -- Table `delivery`.`authorized_user`
 -- -----------------------------------------------------
@@ -53,16 +48,6 @@ CREATE TABLE IF NOT EXISTS `delivery`.`authorized_user`
             ON UPDATE NO ACTION
 )
     ENGINE = InnoDB;
-
--- id = 1
-INSERT INTO `delivery`.`authorized_user`
-VALUES (DEFAULT, 'admin', 'admin', 'Kateryna Zakharova', 0);
--- id = 2
-INSERT INTO `delivery`.`authorized_user`
-VALUES (DEFAULT, 'Paul_Smith1987@gmail.com', '123321', 'Paul Smith', 1);
--- id = 3
-INSERT INTO `delivery`.`authorized_user`
-VALUES (DEFAULT, 'Alina.Petrova13091999@gmail.com', 'flower13091999', 'Алина Петрова', 1);
 
 -- -----------------------------------------------------
 -- Table `delivery`.`rate`
@@ -95,10 +80,10 @@ CREATE TABLE IF NOT EXISTS `delivery`.`order`
     `driver_id_driver`                   INT         NOT NULL,
     PRIMARY KEY (`id_order`),
     UNIQUE INDEX `id_order_UNIQUE` (`id_order` ASC) VISIBLE,
-    INDEX `fk_order_authoried_user1_idx` (`authorized_user_id_authorized_user` ASC) VISIBLE,
+    INDEX `fk_order_authorized_user1_idx` (`authorized_user_id_authorized_user` ASC) VISIBLE,
     INDEX `fk_order_rate1_idx` (`rate_id_rate` ASC) VISIBLE,
     INDEX `fk_order_driver1_idx` (`driver_id_driver` ASC) VISIBLE,
-    CONSTRAINT `fk_order_authoried_user1`
+    CONSTRAINT `fk_order_authorized_user1`
         FOREIGN KEY (`authorized_user_id_authorized_user`)
             REFERENCES `delivery`.`authorized_user` (`id_authorized_user`)
             ON DELETE NO ACTION

@@ -26,6 +26,10 @@ public class OrderDao {
     private static final String SQL__FIND_ORDERS_BY_PAYMENT =
             "SELECT * FROM order WHERE payment=?";
 
+    private static final String SQL_INSERT_ORDER =
+            "INSERT INTO `delivery`.`order` (departure_date, type, weight, volume, city) VALUES (?, ?, ?, ?, ?)";
+
+
     /**
      * Returns all categories.
      *
@@ -210,6 +214,21 @@ public class OrderDao {
         }
 
         return ordersList;
+    }
+
+    public void insertOrder(Date departureDate, String type, int weight, int volume, String city) throws SQLException {
+        Connection connection = DBManager.getInstance().getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(SQL_INSERT_ORDER);
+
+        preparedStatement.setDate(1, departureDate);
+        preparedStatement.setString(2, type);
+        preparedStatement.setInt(3, weight);
+        preparedStatement.setInt(4, volume);
+        preparedStatement.setString(5, city);
+
+        preparedStatement.execute();
+
+        connection.close();
     }
 
     /**
